@@ -1,5 +1,5 @@
-// Package i3bar provides an Go library for i3bar protocol support.
-package i3bar
+// Package i3barjson provides a Go library for i3bar JSON protocol support.
+package i3barjson
 
 import (
     "encoding/json"
