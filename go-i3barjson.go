@@ -49,7 +49,7 @@ func (d *Block) String() string {
 }
 
 // StatusLine represents a full i3bar status line.
-type StatusLine []Block
+type StatusLine []*Block
 
 // String pretty prints StatusLine objects.
 func (d *StatusLine) String() string {
