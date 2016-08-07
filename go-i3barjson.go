@@ -69,6 +69,15 @@ type Click struct {
 	Button   int    `json:"button"`
 }
 
+// String pretty prints Click objects.
+func (d *Click) String() string {
+	str, err := json.MarshalIndent(d, "", "    ")
+	if err != nil {
+		return err.Error()
+	}
+	return string(str)
+}
+
 // jsonArrayEncoder is an object that streams an infinite JSON array.
 type jsonArrayEncoder struct {
 	count int
@@ -100,15 +109,6 @@ func (e *jsonArrayEncoder) Encode(v interface{}) error {
 // newJsonArrayEncoder returns a new jsonArrayEncoder that wraps w.
 func newJsonArrayEncoder(w io.Writer) *jsonArrayEncoder {
 	return &jsonArrayEncoder{0, w, *json.NewEncoder(w)}
-}
-
-// String pretty prints Click objects.
-func (d *Click) String() string {
-	str, err := json.MarshalIndent(d, "", "    ")
-	if err != nil {
-		return err.Error()
-	}
-	return string(str)
 }
 
 // Init initializes the i3bar io.
