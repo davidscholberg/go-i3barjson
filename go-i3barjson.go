@@ -113,7 +113,7 @@ func newJsonArrayEncoder(w io.Writer) *jsonArrayEncoder {
 
 // Init initializes the i3bar io.
 // w is the io.Writer to write to (usually os.Stdout).
-// r is the io.Reader to from (usually os.Stdin). TODO: implement
+// r is the io.Reader to from (usually os.Stdin) (TODO: implement).
 // q is a channel that will be closed when the write loop is finished.
 // The returned channel can be used to write status lines to w.
 func Init(h *Header, w io.Writer, r io.Reader, q chan bool) (chan StatusLine, error) {
