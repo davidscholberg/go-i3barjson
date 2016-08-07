@@ -29,7 +29,7 @@ type Block struct {
 	Full_text             string `json:"full_text"`
 	Short_text            string `json:"short_text,omitempty"`
 	Color                 string `json:"color,omitempty"`
-	Min_width             int    `json:"min_width,omitempty"`
+	Min_width             string `json:"min_width,omitempty"`
 	Align                 string `json:"align,omitempty"`
 	Name                  string `json:"name,omitempty"`
 	Instance              string `json:"instance,omitempty"`
