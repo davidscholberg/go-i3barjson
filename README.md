@@ -39,8 +39,8 @@ func main() {
 	status := i3barjson.StatusLine{&countBlock, &timeBlock}
 
 	for i := 0; i < 10; i++ {
-		countBlock.Full_text = fmt.Sprintf("%d", i)
-		timeBlock.Full_text = time.Now().Format("2006-01-02 15:04:05")
+		countBlock.FullText = fmt.Sprintf("%d", i)
+		timeBlock.FullText = time.Now().Format("2006-01-02 15:04:05")
 		i3barChan <- status
 		time.Sleep(time.Second)
 	}
