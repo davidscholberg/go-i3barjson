@@ -57,3 +57,4 @@ func main() {
 ### TODO
 
 * Implement stdin handling to read mouse events from i3bar.
+* Add a debug mode that pretty prints the JSON output.
