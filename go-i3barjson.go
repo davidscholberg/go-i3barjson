@@ -7,6 +7,9 @@ import (
 	"io"
 )
 
+var jsonWriter *jsonArrayEncoder
+var statusChan chan StatusLine
+
 // marshalIndent returns a marshalled JSON string of the given object.
 func marshalIndent(d interface{}) string {
 	str, err := json.MarshalIndent(d, "", "    ")
@@ -104,46 +107,48 @@ func newJsonArrayEncoder(w io.Writer) *jsonArrayEncoder {
 	return &jsonArrayEncoder{0, w, *json.NewEncoder(w)}
 }
 
-// Init initializes the i3bar io.
+// Init initializes the i3bar io and returns the output channel.
 // w is the io.Writer to write to (usually os.Stdout).
 // r is the io.Reader to from (usually os.Stdin) (TODO: implement).
-// q is a channel that will be closed when the write loop is finished.
 // The returned channel can be used to write status lines to w.
-func Init(h *Header, w io.Writer, r io.Reader, q chan bool) (chan StatusLine, error) {
+func Init(w io.Writer, r io.Reader) (chan StatusLine, error) {
 	if w == nil {
 		return nil, fmt.Errorf("error: Writer required")
 	}
-	var jsonWriter = newJsonArrayEncoder(w)
+	jsonWriter = newJsonArrayEncoder(w)
 	// TODO: implement read loop
 	//var jsonReader *json.Decoder
 	if r != nil {
 		//jsonReader = json.NewDecoder(r)
 	}
 
-	msg, err := json.Marshal(h)
-	if err != nil {
-		return nil, fmt.Errorf("error: couldn't parse Header")
-	}
-	_, err = fmt.Fprintln(w, string(msg))
-	if err != nil {
-		return nil, fmt.Errorf("error: couldn't write to Writer")
-	}
-
-	statusChan := make(chan StatusLine)
-	go writeLoop(jsonWriter, statusChan, q)
+	statusChan = make(chan StatusLine)
 	return statusChan, nil
 }
 
+// Start starts the i3bar io.
+// h is the Header object to send as the first line to i3bar.
+func Start(h *Header) error {
+	msg, err := json.Marshal(h)
+	if err != nil {
+		return err
+	}
+	_, err = fmt.Fprintln(jsonWriter.w, string(msg))
+	if err != nil {
+		return err
+	}
+
+	return writeLoop(jsonWriter, statusChan)
+}
+
 // writeLoop continuosly writes status lines sent over c to e.
-// q is closed when there are no more values to read from c.
-func writeLoop(e *jsonArrayEncoder, c chan StatusLine, q chan bool) {
+func writeLoop(e *jsonArrayEncoder, c chan StatusLine) error {
 	for block := range c {
-		// TODO: proper error handling
 		err := e.Encode(block)
 		if err != nil {
-			fmt.Printf("%s\n", err)
+			return err
 		}
 	}
 
-	close(q)
+	return nil
 }
