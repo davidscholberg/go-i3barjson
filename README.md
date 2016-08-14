@@ -52,7 +52,8 @@ func main() {
 
 ### Caveats
 
-Note that the [i3bar JSON protocol spec](https://i3wm.org/docs/i3bar-protocol.html) allows the `min_width` field to be either a string or an int. It's not easy to parse a field that can have two different types in Go's JSON library, so Go-i3barjson only supports a single type for `min_width`: the string type. The reason the string type was chosen over the int type is that `min_width`'s string type (which specifies character-width) seems more generally useful than its int type (which specifies pixel-width).
+* The `Update` function is not thread-safe, so it must always be called from the same thread.
+* The [i3bar JSON protocol spec](https://i3wm.org/docs/i3bar-protocol.html) allows the `min_width` field to be either a string or an int. It's not easy to parse a field that can have two different types in Go's JSON library, so Go-i3barjson only supports a single type for `min_width`: the string type. The reason the string type was chosen over the int type is that `min_width`'s string type (which specifies character-width) seems more generally useful than its int type (which specifies pixel-width).
 
 ### TODO
 
