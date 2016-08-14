@@ -10,6 +10,7 @@ import (
 var jsonWriter jsonArrayEncoder
 
 // marshalIndent returns a marshalled JSON string of the given object.
+// NOTE: if the marshal call fails, then a non-JSON error string is returned.
 func marshalIndent(d interface{}) string {
 	str, err := json.MarshalIndent(d, "", "    ")
 	if err != nil {
