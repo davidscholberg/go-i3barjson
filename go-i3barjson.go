@@ -133,7 +133,8 @@ func Init(w io.Writer, r io.Reader, h Header) error {
 	return nil
 }
 
-// Update sends a new StatusLine to i3bar
+// Update sends a new StatusLine to i3bar.
+// NOTE: this function is not thread safe. Only call it from a single thread.
 func Update(s StatusLine) error {
 	err := jsonWriter.Encode(s)
 	if err != nil {
