@@ -7,7 +7,7 @@ import (
 	"io"
 )
 
-var jsonWriter *jsonArrayEncoder
+var jsonWriter jsonArrayEncoder
 var statusChan chan StatusLine
 
 // marshalIndent returns a marshalled JSON string of the given object.
@@ -28,7 +28,7 @@ type Header struct {
 }
 
 // String pretty prints Header objects.
-func (d *Header) String() string {
+func (d Header) String() string {
 	return marshalIndent(d)
 }
 
@@ -48,7 +48,7 @@ type Block struct {
 }
 
 // String pretty prints Block objects.
-func (d *Block) String() string {
+func (d Block) String() string {
 	return marshalIndent(d)
 }
 
@@ -56,7 +56,7 @@ func (d *Block) String() string {
 type StatusLine []*Block
 
 // String pretty prints StatusLine objects.
-func (d *StatusLine) String() string {
+func (d StatusLine) String() string {
 	return marshalIndent(d)
 }
 
@@ -70,7 +70,7 @@ type Click struct {
 }
 
 // String pretty prints Click objects.
-func (d *Click) String() string {
+func (d Click) String() string {
 	return marshalIndent(d)
 }
 
@@ -103,8 +103,8 @@ func (e *jsonArrayEncoder) Encode(v interface{}) error {
 }
 
 // newJsonArrayEncoder returns a new jsonArrayEncoder that wraps w.
-func newJsonArrayEncoder(w io.Writer) *jsonArrayEncoder {
-	return &jsonArrayEncoder{0, w, *json.NewEncoder(w)}
+func newJsonArrayEncoder(w io.Writer) jsonArrayEncoder {
+	return jsonArrayEncoder{0, w, *json.NewEncoder(w)}
 }
 
 // Init initializes the i3bar io and returns the output channel.
@@ -128,7 +128,7 @@ func Init(w io.Writer, r io.Reader) (chan StatusLine, error) {
 
 // Start starts the i3bar io.
 // h is the Header object to send as the first line to i3bar.
-func Start(h *Header) error {
+func Start(h Header) error {
 	msg, err := json.Marshal(h)
 	if err != nil {
 		return err
@@ -142,7 +142,7 @@ func Start(h *Header) error {
 }
 
 // writeLoop continuosly writes status lines sent over c to e.
-func writeLoop(e *jsonArrayEncoder, c chan StatusLine) error {
+func writeLoop(e jsonArrayEncoder, c chan StatusLine) error {
 	for block := range c {
 		err := e.Encode(block)
 		if err != nil {
