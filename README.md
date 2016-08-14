@@ -25,8 +25,7 @@ import (
 )
 
 func main() {
-	h := i3barjson.Header{}
-	h.Version = 1
+	h := i3barjson.Header{Version: 1}
 	err := i3barjson.Init(os.Stdout, nil, h)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%s", err)
