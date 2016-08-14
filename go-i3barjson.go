@@ -94,12 +94,7 @@ func (e *jsonArrayEncoder) Encode(v interface{}) error {
 		return err
 	}
 
-	err = e.e.Encode(v)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return e.e.Encode(v)
 }
 
 // newJsonArrayEncoder returns a new jsonArrayEncoder that wraps w.
@@ -137,9 +132,5 @@ func Init(w io.Writer, r io.Reader, h Header) error {
 // Update sends a new StatusLine to i3bar.
 // NOTE: this function is not thread safe. Only call it from a single thread.
 func Update(s StatusLine) error {
-	err := jsonWriter.Encode(s)
-	if err != nil {
-		return err
-	}
-	return nil
+	return jsonWriter.Encode(s)
 }
