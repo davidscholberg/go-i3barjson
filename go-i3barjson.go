@@ -7,6 +7,15 @@ import (
 	"io"
 )
 
+// marshalIndent returns a marshalled JSON string of the given object.
+func marshalIndent(d interface{}) string {
+	str, err := json.MarshalIndent(d, "", "    ")
+	if err != nil {
+		return err.Error()
+	}
+	return string(str)
+}
+
 // Header represents the header of an i3bar message.
 type Header struct {
 	Version     int  `json:"version"`
@@ -17,11 +26,7 @@ type Header struct {
 
 // String pretty prints Header objects.
 func (d *Header) String() string {
-	str, err := json.MarshalIndent(d, "", "    ")
-	if err != nil {
-		return err.Error()
-	}
-	return string(str)
+	return marshalIndent(d)
 }
 
 // Block represents a single block of an i3bar message.
@@ -41,11 +46,7 @@ type Block struct {
 
 // String pretty prints Block objects.
 func (d *Block) String() string {
-	str, err := json.MarshalIndent(d, "", "    ")
-	if err != nil {
-		return err.Error()
-	}
-	return string(str)
+	return marshalIndent(d)
 }
 
 // StatusLine represents a full i3bar status line.
@@ -53,11 +54,7 @@ type StatusLine []*Block
 
 // String pretty prints StatusLine objects.
 func (d *StatusLine) String() string {
-	str, err := json.MarshalIndent(d, "", "    ")
-	if err != nil {
-		return err.Error()
-	}
-	return string(str)
+	return marshalIndent(d)
 }
 
 // Click represents an i3bar click event.
@@ -71,11 +68,7 @@ type Click struct {
 
 // String pretty prints Click objects.
 func (d *Click) String() string {
-	str, err := json.MarshalIndent(d, "", "    ")
-	if err != nil {
-		return err.Error()
-	}
-	return string(str)
+	return marshalIndent(d)
 }
 
 // jsonArrayEncoder is an object that streams an infinite JSON array.
