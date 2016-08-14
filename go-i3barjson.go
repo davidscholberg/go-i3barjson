@@ -8,7 +8,6 @@ import (
 )
 
 var jsonWriter jsonArrayEncoder
-var statusChan chan StatusLine
 
 // marshalIndent returns a marshalled JSON string of the given object.
 func marshalIndent(d interface{}) string {
@@ -107,13 +106,13 @@ func newJsonArrayEncoder(w io.Writer) jsonArrayEncoder {
 	return jsonArrayEncoder{0, w, *json.NewEncoder(w)}
 }
 
-// Init initializes the i3bar io and returns the output channel.
+// Init initializes the i3bar io.
 // w is the io.Writer to write to (usually os.Stdout).
 // r is the io.Reader to from (usually os.Stdin) (TODO: implement).
-// The returned channel can be used to write status lines to w.
-func Init(w io.Writer, r io.Reader) (chan StatusLine, error) {
+// h is the Header object to send as the first line to i3bar.
+func Init(w io.Writer, r io.Reader, h Header) error {
 	if w == nil {
-		return nil, fmt.Errorf("error: Writer required")
+		return fmt.Errorf("error: Writer required")
 	}
 	jsonWriter = newJsonArrayEncoder(w)
 	// TODO: implement read loop
@@ -122,13 +121,6 @@ func Init(w io.Writer, r io.Reader) (chan StatusLine, error) {
 		//jsonReader = json.NewDecoder(r)
 	}
 
-	statusChan = make(chan StatusLine)
-	return statusChan, nil
-}
-
-// Start starts the i3bar io.
-// h is the Header object to send as the first line to i3bar.
-func Start(h Header) error {
 	msg, err := json.Marshal(h)
 	if err != nil {
 		return err
@@ -138,17 +130,14 @@ func Start(h Header) error {
 		return err
 	}
 
-	return writeLoop(jsonWriter, statusChan)
+	return nil
 }
 
-// writeLoop continuosly writes status lines sent over c to e.
-func writeLoop(e jsonArrayEncoder, c chan StatusLine) error {
-	for block := range c {
-		err := e.Encode(block)
-		if err != nil {
-			return err
-		}
+// Update sends a new StatusLine to i3bar
+func Update(s StatusLine) error {
+	err := jsonWriter.Encode(s)
+	if err != nil {
+		return err
 	}
-
 	return nil
 }

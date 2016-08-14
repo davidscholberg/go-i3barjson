@@ -25,7 +25,9 @@ import (
 )
 
 func main() {
-	i3barChan, err := i3barjson.Init(os.Stdout, nil)
+	h := i3barjson.Header{}
+	h.Version = 1
+	err := i3barjson.Init(os.Stdout, nil, h)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%s", err)
 		return
@@ -35,23 +37,15 @@ func main() {
 	timeBlock := i3barjson.Block{}
 	status := i3barjson.StatusLine{&countBlock, &timeBlock}
 
-	go func() {
-		for i := 0; i < 10; i++ {
-			countBlock.FullText = fmt.Sprintf("%d", i)
-			timeBlock.FullText = time.Now().Format("2006-01-02 15:04:05")
-			i3barChan <- status
-			time.Sleep(time.Second)
+	for i := 0; i < 10; i++ {
+		countBlock.FullText = fmt.Sprintf("%d", i)
+		timeBlock.FullText = time.Now().Format("2006-01-02 15:04:05")
+		err = i3barjson.Update(status)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%s", err)
+			break
 		}
-
-		close(i3barChan)
-	}()
-
-	h := i3barjson.Header{}
-	h.Version = 1
-	err = i3barjson.Start(&h)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "%s", err)
-		return
+		time.Sleep(time.Second)
 	}
 }
 ```
