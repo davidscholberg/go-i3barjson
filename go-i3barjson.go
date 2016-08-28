@@ -98,19 +98,26 @@ func (e *jsonArrayEncoder) Encode(v interface{}) error {
 }
 
 // newJsonArrayEncoder returns a new jsonArrayEncoder that wraps w.
-func newJsonArrayEncoder(w io.Writer) jsonArrayEncoder {
-	return jsonArrayEncoder{0, w, *json.NewEncoder(w)}
+// w is the io.Writer to wrap.
+// pretty controls whether or not json output will be pretty printed.
+func newJsonArrayEncoder(w io.Writer, pretty bool) jsonArrayEncoder {
+	e := json.NewEncoder(w)
+	if pretty {
+		e.SetIndent("", "    ")
+	}
+	return jsonArrayEncoder{0, w, *e}
 }
 
 // Init initializes the i3bar io.
 // w is the io.Writer to write to (usually os.Stdout).
 // r is the io.Reader to from (usually os.Stdin) (TODO: implement).
 // h is the Header object to send as the first line to i3bar.
-func Init(w io.Writer, r io.Reader, h Header) error {
+// pretty controls whether or not json output will be pretty printed.
+func Init(w io.Writer, r io.Reader, h Header, pretty bool) error {
 	if w == nil {
 		return fmt.Errorf("error: Writer required")
 	}
-	jsonWriter = newJsonArrayEncoder(w)
+	jsonWriter = newJsonArrayEncoder(w, pretty)
 	// TODO: implement read loop
 	//var jsonReader *json.Decoder
 	if r != nil {

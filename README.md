@@ -4,6 +4,8 @@ Go-i3barjson is a [Go](https://golang.org/) library that implements the [i3bar J
 
 ### Get
 
+Go-i3barjson requires Go version 1.7+.
+
 Fetch and build Go-i3barjson:
 
 ```
@@ -26,7 +28,7 @@ import (
 
 func main() {
 	h := i3barjson.Header{Version: 1}
-	err := i3barjson.Init(os.Stdout, nil, h)
+	err := i3barjson.Init(os.Stdout, nil, h, false)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%s", err)
 		return
@@ -57,4 +59,3 @@ func main() {
 ### TODO
 
 * Implement stdin handling to read mouse events from i3bar.
-* Add a debug mode that pretty prints the JSON output.
